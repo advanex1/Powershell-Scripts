@@ -19,7 +19,7 @@ $newPassword = $(Read-Host "Enter Password" -AsSecureString)
 
 Import-Csv "C:\Scripts\ADUsers.csv" | ForEach-Object {
  $samAccountName = $_."samAccountName"
-Get-ADUser -Identity $samAccountName | Set-ADAccountPassword -NewPassword $newPassword
+Get-ADUser -Identity $samAccountName | Set-ADAccountPassword -NewPassword $newPassword -Reset
 Get-ADUser -Identity $samAccountName | Enable-ADAccount
 Set-ADUser -Identity $samAccountName -ChangePasswordAtLogon $True
 }
