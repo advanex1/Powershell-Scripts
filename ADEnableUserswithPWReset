@@ -1,0 +1,28 @@
+## names the logs to be in correct format (Log 14-09-2019-03-41-19)
+$LogStart = 'Log '
+
+$LogDate = Get-Date -Format "dd-MM-yyy-hh-mm-ss"
+
+$FileName = $LogStart + $LogDate + '.txt.'
+
+## starts logging
+Start-Transcript -Path "C:\Scripts\$FileName"
+
+## import AD
+Import-Module ActiveDirectory
+
+## prompts for pw to enter for ALL accounts listed in ADusers.csv securely
+$newPassword = $(Read-Host "Enter Password" -AsSecureString)
+
+## ensure you change the adusers.csv to be ms-dos formatted and contains the usernames of
+## individuals (what you use to login) i.e. user1 - only place them in row 1 under samAccountName
+
+Import-Csv "C:\Scripts\ADUsers.csv" | ForEach-Object {
+ $samAccountName = $_."samAccountName"
+Get-ADUser -Identity $samAccountName | Set-ADAccountPassword -NewPassword $newPassword
+Get-ADUser -Identity $samAccountName | Enable-ADAccount
+Set-ADUser -Identity $samAccountName -ChangePasswordAtLogon $True
+}
+
+## stops logging
+Stop-Transcript
